@@ -106,7 +106,7 @@ module Fluent::Plugin
     def parse_payload(msg)
       es = Fluent::MultiEventStream.new
       split_records = msg.split("\n")
-      # log.debug(split_records)
+      log.debug("Array of messages #{split_records}")
       split_records.each { |new_record|
         @parser.parse(new_record) do |time, record|
           es.add(time, record)
