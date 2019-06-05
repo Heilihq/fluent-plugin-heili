@@ -19,14 +19,14 @@ module Fluent
         record = JSON.parse(text)
         time = record.dig('timestamp') || Engine.now
         log.debug("Metrics time: #{time}")
-        if record.key?("fields") {
+        if record.key?("fields")
           record['fields'].each { |k,v|
             if (v.is_a? Integer) && (!v.between?(LONG_MIN, LONG_MAX))
               log.warn("Converting Bignum to string in #{k} key")
               record['fields'][k] = v.to_s
             end
           }
-        }
+        end
         yield time, record
       end
     end
