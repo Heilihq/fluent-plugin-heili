@@ -19,6 +19,9 @@ module Fluent
         record = JSON.parse(text)
         time = record.dig('timestamp') || Engine.now
         log.debug("Metrics time: #{time}")
+        unless record.key?("timestamp")
+          record["timestamp"] = Engine.now
+        end
         if record.key?("fields")
           record['fields'].each { |k,v|
             if (v.is_a? Integer) && (!v.between?(LONG_MIN, LONG_MAX))
