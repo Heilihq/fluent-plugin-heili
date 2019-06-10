@@ -1,4 +1,5 @@
 require 'fluent/parser'
+require 'time'
 
 module Fluent
   class TextParser
@@ -18,10 +19,12 @@ module Fluent
         log.debug("Metrics: #{text}")
         record = JSON.parse(text)
         time = record.dig('timestamp') || Engine.now
-        log.debug("Metrics time: #{time}")
-        unless record.key?("timestamp")
-          record["timestamp"] = Engine.now
+        begin
+          time = DateTime.parse(time).to_time.to_i
+        rescue TypeError
         end
+        record['timestamp'] = time
+        log.debug("Metrics time: #{time}")
         if record.key?("fields")
           record['fields'].each { |k,v|
             if (v.is_a? Integer) && (!v.between?(LONG_MIN, LONG_MAX))
